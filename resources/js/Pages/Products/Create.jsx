@@ -100,9 +100,42 @@ export default function Create() {
                         type="file"
                         multiple
                         className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
-                        onChange={(e) => setData('images', e.target.files)}
+                        onChange={(e) => {
+                            const newFiles = Array.from(e.target.files);
+                            setData('images', [...data.images, ...newFiles]);
+                        }}
                     />
                     <InputError message={errors.images} className="mt-2" />
+
+                    {/* Image Previews */}
+                    {data.images.length > 0 && (
+                        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+                            {data.images.map((file, index) => (
+                                <div key={index} className="relative group">
+                                    <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden rounded-lg bg-zinc-800 border border-zinc-700">
+                                        <img
+                                            src={URL.createObjectURL(file)}
+                                            alt={`Preview ${index}`}
+                                            className="h-24 w-full object-cover object-center"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const newImages = data.images.filter((_, i) => i !== index);
+                                                setData('images', newImages);
+                                            }}
+                                            className="absolute top-1 right-1 rounded-full bg-red-600 p-1 text-white shadow-sm hover:bg-red-500 focus:outline-none"
+                                        >
+                                            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <p className="mt-1 text-xs text-zinc-400 truncate">{file.name}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 <div className="mt-4 flex items-center justify-end">
