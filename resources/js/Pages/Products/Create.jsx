@@ -9,14 +9,16 @@ export default function Create() {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         price: 0.0,
-        stock: 1
+        stock: 1,
+        images: []
     });
 
     const submit = (e) => {
         e.preventDefault();
 
         post(route('products.store'), {
-            onFinish: () => reset('name', 'price', 'stock')
+            forceFormData: true,
+            onFinish: () => reset('name', 'price', 'stock', 'images')
         });
     };
 
@@ -24,7 +26,7 @@ export default function Create() {
         <GuestLayout>
             <Head title="Create Product" />
 
-            <form onSubmit={submit}>
+            <form onSubmit={submit} encType="multipart/form-data">
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
 
@@ -47,7 +49,7 @@ export default function Create() {
 
                     <TextInput
                         id="price"
-                        type="price"
+                        type="number"
                         name="price"
                         value={data.price}
                         className="mt-1 block w-full"
@@ -64,7 +66,7 @@ export default function Create() {
 
                     <TextInput
                         id="stock"
-                        type="stock"
+                        type="number"
                         name="stock"
                         value={data.stock}
                         className="mt-1 block w-full"
@@ -73,19 +75,24 @@ export default function Create() {
                         required
                     />
 
-                    <InputError message={errors.price} className="mt-2" />
+                    <InputError message={errors.stock} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="images" value="Images" />
+                    <input
+                        id="images"
+                        type="file"
+                        multiple
+                        className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                        onChange={(e) => setData('images', e.target.files)}
+                    />
+                    <InputError message={errors.images} className="mt-2" />
                 </div>
 
                 <div className="mt-4 flex items-center justify-end">
-                    <Link
-                        href={route('login')}
-                        className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                    >
-                        Already registered?
-                    </Link>
-
                     <PrimaryButton className="ms-4" disabled={processing}>
-                        Register
+                        Create Product
                     </PrimaryButton>
                 </div>
             </form>

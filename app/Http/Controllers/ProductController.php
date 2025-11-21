@@ -9,27 +9,40 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function index(): Response
+    public function index()
     {
-        $products = Product::all();
+        $products = Product::with('images')->get();
         return Inertia::render('Products/Index', [
             'products' => $products
         ]);
     }
-
-    public function store(Request $request): \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+    public function create()
     {
-        Product::create([
-            'name' => $request['name'],
-            'price' => $request['price'],
-            'stock' => $request['stock']
-        ]);
-
-        return redirect(route('dashboard', absolute: false));
+        return Inertia::render('Products/Create');
     }
 
-    public function create(): Response
+    public function store(Request $request)
     {
-        return Inertia::render('Products/Create', []);
+        $request->validate([
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'stock' => 'required|integer',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ]);
+
+        $product = Product::create($request->only('name', 'price', 'stock'));
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('products', 'public');
+                $product->images()->create([
+                    'path' => $path,
+                    'mime_type' => $image->getClientMimeType(),
+                    'size' => $image->getSize()
+                ]);
+            }
+        }
+
+        return redirect()->route('products.index');
     }
 }
