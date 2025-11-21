@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('images')->get();
+        $products = Product::with('images')->paginate(12);
         return Inertia::render('Products/Index', [
             'products' => $products
         ]);
