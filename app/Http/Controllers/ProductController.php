@@ -27,10 +27,11 @@ class ProductController extends Controller
             'name' => 'required',
             'price' => 'required|numeric',
             'stock' => 'required|integer',
+            'description' => 'nullable|string',
             'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
         ]);
 
-        $product = Product::create($request->only('name', 'price', 'stock'));
+        $product = Product::create($request->only('name', 'price', 'stock', 'description'));
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -44,5 +45,13 @@ class ProductController extends Controller
         }
 
         return redirect()->route('products.index');
+    }
+
+    public function show(Product $product)
+    {
+        $product->load('images');
+        return Inertia::render('Products/Show', [
+            'product' => $product
+        ]);
     }
 }

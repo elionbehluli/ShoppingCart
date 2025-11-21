@@ -10,6 +10,7 @@ export default function Create() {
         name: '',
         price: 0.0,
         stock: 1,
+        description: '',
         images: []
     });
 
@@ -18,7 +19,7 @@ export default function Create() {
 
         post(route('products.store'), {
             forceFormData: true,
-            onFinish: () => reset('name', 'price', 'stock', 'images')
+            onFinish: () => reset('name', 'price', 'stock', 'description', 'images')
         });
     };
 
@@ -76,6 +77,20 @@ export default function Create() {
                     />
 
                     <InputError message={errors.stock} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="description" value="Description" />
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        value={data.description}
+                        className="mt-1 block w-full rounded-md border-green-900 bg-zinc-800 text-white shadow-sm focus:border-green-500 focus:ring-green-500"
+                        onChange={(e) => setData('description', e.target.value)}
+                    />
+
+                    <InputError message={errors.description} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
