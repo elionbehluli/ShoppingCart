@@ -1,5 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
-
+import { Head, Link, router } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 export default function Index({ auth, products }) {
     return (
         <>
@@ -84,15 +84,17 @@ export default function Index({ auth, products }) {
                                                         <h2 className="text-lg font-bold mb-2 text-white font-mono">{product.name}</h2>
                                                         <p className="text-green-400 mb-2 font-mono">Price: ${product.price}</p>
                                                         <p className="text-sm text-zinc-400 font-mono">Stock: {product.stock}</p>
-                                                        <button
-                                                            className="mt-auto w-full bg-green-700 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors shadow-lg shadow-green-900/50 font-mono uppercase tracking-wider text-sm z-10 relative"
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                // Add to cart logic here
-                                                            }}
-                                                        >
-                                                            Add to Cart
-                                                        </button>
+                                                        {auth.user &&
+                                                            <button
+                                                                className="mt-auto w-full bg-green-700 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors shadow-lg shadow-green-900/50 font-mono uppercase tracking-wider text-sm z-10 relative"
+                                                                onClick={(e) => {
+                                                                    e.preventDefault();
+                                                                    router.post(route('cart.add', product.id));
+                                                                }}
+                                                            >
+                                                                Add to Cart
+                                                            </button>
+                                                        }
                                                     </div>
                                                 </Link>
                                             ))}
@@ -107,8 +109,8 @@ export default function Index({ auth, products }) {
                                                             key={index}
                                                             href={link.url}
                                                             className={`px-4 py-2 rounded-lg border ${link.active
-                                                                    ? 'bg-green-700 text-white border-green-600'
-                                                                    : 'bg-zinc-800 text-zinc-300 border-zinc-700 hover:bg-zinc-700'
+                                                                ? 'bg-green-700 text-white border-green-600'
+                                                                : 'bg-zinc-800 text-zinc-300 border-zinc-700 hover:bg-zinc-700'
                                                                 }`}
                                                             dangerouslySetInnerHTML={{ __html: link.label }}
                                                             preserveScroll

@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 
 export default function Show({ auth, product }) {
@@ -89,9 +89,14 @@ export default function Show({ auth, product }) {
                                 </div>
 
                                 <div className="flex space-x-4">
-                                    <button className="flex-1 bg-green-700 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-colors shadow-lg shadow-green-900/50 font-mono uppercase tracking-wider font-bold">
-                                        Add to Cart
-                                    </button>
+                                    {auth.user &&
+                                        <button
+                                            onClick={() => router.post(route('cart.add', product.id))}
+                                            className="flex-1 bg-green-700 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-colors shadow-lg shadow-green-900/50 font-mono uppercase tracking-wider font-bold"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    }
                                     <Link
                                         href={route('products.index')}
                                         className="flex-1 bg-zinc-800 text-white py-3 px-6 rounded-lg hover:bg-zinc-700 transition-colors border border-zinc-700 text-center flex items-center justify-center font-mono"
