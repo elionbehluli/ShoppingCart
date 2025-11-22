@@ -1,18 +1,24 @@
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import { Link } from '@inertiajs/react';
+import Footer from '@/Components/Footer';
+import Navbar from '@/Components/Navbar';
 
-export default function GuestLayout({ children }) {
+export default function Guest({ children }) {
     return (
-        <div className="flex min-h-screen flex-col items-center bg-black bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-green-900/20 via-black to-black pt-6 sm:justify-center sm:pt-0">
-            <div>
-                <Link href="/">
-                    <ApplicationLogo className="h-20 w-20 fill-current text-gray-500" />
-                </Link>
-            </div>
+        <div className="min-h-screen flex flex-col bg-black text-white">
+            <Navbar />
+            <div className="flex-grow flex flex-col justify-center items-center w-full sm:pt-0">
+                <div>
+                    <Link href="/">
+                        <ApplicationLogo className="w-20 h-20 fill-current text-green-500" />
+                    </Link>
+                </div>
 
-            <div className="mt-6 w-full overflow-hidden bg-zinc-900 px-6 py-4 shadow-lg shadow-green-900/20 border border-green-900/50 sm:max-w-md sm:rounded-lg">
-                {children}
+                <div className="w-full sm:max-w-md mt-6 px-6 py-4 bg-zinc-900 shadow-md overflow-hidden sm:rounded-lg border border-green-900/50">
+                    {children}
+                </div>
             </div>
+            <Footer />
         </div>
     );
 }

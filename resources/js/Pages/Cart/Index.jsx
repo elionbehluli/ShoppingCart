@@ -28,7 +28,7 @@ export default function Index({ auth, products, total }) {
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-zinc-900 overflow-hidden shadow-lg shadow-green-900/20 sm:rounded-lg border border-green-900/50">
-                        <div className="p-6 text-white">
+                        <div className="p-6 text-zinc-300">
                             {products.length > 0 ? (
                                 <>
                                     <div className="overflow-x-auto">
@@ -83,7 +83,7 @@ export default function Index({ auth, products, total }) {
                                                                 </button>
                                                             </div>
                                                         </td>
-                                                        <td className="py-4 text-right font-mono text-white">
+                                                        <td className="py-4 text-right font-mono text-green-400">
                                                             ${(product.price * product.pivot.quantity).toFixed(2)}
                                                         </td>
                                                         <td className="py-4 text-right pr-4">
