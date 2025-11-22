@@ -8,8 +8,25 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
 
+use Inertia\Inertia;
+
 class CartController extends Controller
 {
+    public function index()
+    {
+        $user = Auth::user();
+        $cart = $user->cart;
+        $products = $cart ? $cart->products : [];
+        $total = $products->sum(function ($product) {
+            return $product->price * $product->pivot->quantity;
+        });
+
+        return Inertia::render('Cart/Index', [
+            'products' => $products,
+            'total' => $total
+        ]);
+    }
+
     public function add(Request $request, Product $product)
     {
         $request->validate([
