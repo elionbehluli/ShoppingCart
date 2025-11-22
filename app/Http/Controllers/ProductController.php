@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Product\CreateProductRequest;
 use App\Models\Product;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,16 +22,8 @@ class ProductController extends Controller
         return Inertia::render('Products/Create');
     }
 
-    public function store(Request $request)
+    public function store(CreateProductRequest $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'price' => 'required|numeric',
-            'stock' => 'required|integer',
-            'description' => 'nullable|string',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048'
-        ]);
-
         $product = Product::create($request->only('name', 'price', 'stock', 'description'));
 
         if ($request->hasFile('images')) {

@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 export default function Show({ auth, product }) {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [quantity, setQuantity] = useState(1);
 
     const nextImage = () => {
         if (product.images && product.images.length > 0) {
@@ -14,6 +15,25 @@ export default function Show({ auth, product }) {
     const prevImage = () => {
         if (product.images && product.images.length > 0) {
             setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length);
+        }
+    };
+
+    const incrementQuantity = () => {
+        if (product.stock > 0 && quantity < product.stock) {
+            setQuantity(prev => prev + 1);
+        }
+    };
+
+    const decrementQuantity = () => {
+        if (quantity > 1) {
+            setQuantity(prev => prev - 1);
+        }
+    };
+
+    const handleQuantityChange = (e) => {
+        const value = parseInt(e.target.value);
+        if (!isNaN(value) && value >= 1 && value <= product.stock) {
+            setQuantity(value);
         }
     };
 
@@ -86,13 +106,45 @@ export default function Show({ auth, product }) {
                                             {product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'}
                                         </span>
                                     </div>
+
+                                    {/* Quantity Selector */}
+                                    {product.stock > 0 && (
+                                        <div className="mb-6 flex items-center space-x-4">
+                                            <span className="text-zinc-400 font-mono">Quantity:</span>
+                                            <div className="flex items-center border border-zinc-700 rounded-lg overflow-hidden">
+                                                <button
+                                                    onClick={decrementQuantity}
+                                                    className="bg-zinc-800 px-3 py-2 text-white hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                                                    disabled={quantity <= 1}
+                                                >
+                                                    -
+                                                </button>
+                                                <input
+                                                    type="number"
+                                                    min="1"
+                                                    max={product.stock}
+                                                    value={quantity}
+                                                    onChange={handleQuantityChange}
+                                                    className="w-16 bg-zinc-900 text-white text-center border-none focus:ring-0 p-2 appearance-none"
+                                                />
+                                                <button
+                                                    onClick={incrementQuantity}
+                                                    className="bg-zinc-800 px-3 py-2 text-white hover:bg-zinc-700 transition-colors disabled:opacity-50"
+                                                    disabled={quantity >= product.stock}
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div className="flex space-x-4">
                                     {auth.user &&
                                         <button
-                                            onClick={() => router.post(route('cart.add', product.id))}
-                                            className="flex-1 bg-green-700 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-colors shadow-lg shadow-green-900/50 font-mono uppercase tracking-wider font-bold"
+                                            onClick={() => router.post(route('cart.add', product.id), { quantity })}
+                                            disabled={product.stock <= 0}
+                                            className="flex-1 bg-green-700 text-white py-3 px-6 rounded-lg hover:bg-green-600 transition-colors shadow-lg shadow-green-900/50 font-mono uppercase tracking-wider font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             Add to Cart
                                         </button>
