@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
     ];
 
     /**
@@ -50,5 +51,15 @@ class User extends Authenticatable
     public function cart()
     {
         return $this->hasOne(Cart::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(UserRole::class);
+    }
+
+    public function isAdmin()
+    {
+        return $this->role && $this->role->name === 'admin';
     }
 }

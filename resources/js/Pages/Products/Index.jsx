@@ -56,7 +56,17 @@ export default function Index({ auth, products }) {
                     <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                         <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                             <div className="p-6 text-gray-900 dark:text-gray-100">
-                                <h1 className="text-2xl font-semibold mb-6">Our Products</h1>
+                                <div className="flex justify-between items-center mb-6">
+                                    <h1 className="text-2xl font-semibold">Our Products</h1>
+                                    {auth.user && auth.user.role === 'admin' && (
+                                        <Link
+                                            href={route('products.create')}
+                                            className="bg-green-700 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors shadow-lg shadow-green-900/50 font-mono uppercase tracking-wider font-bold text-sm"
+                                        >
+                                            Create Product
+                                        </Link>
+                                    )}
+                                </div>
 
                                 {products.data.length === 0 ? (
                                     <p className="text-gray-500">No products available at the moment.</p>

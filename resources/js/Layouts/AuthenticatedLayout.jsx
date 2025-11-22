@@ -42,6 +42,14 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Cart
                                 </NavLink>
+                                {user && user.role === 'admin' && (
+                                    <NavLink
+                                        href={route('products.create')}
+                                        active={route().current('products.create')}
+                                    >
+                                        Create Product
+                                    </NavLink>
+                                )}
                             </div>
                         </div>
 
@@ -157,6 +165,14 @@ export default function AuthenticatedLayout({ header, children }) {
                         >
                             Cart
                         </ResponsiveNavLink>
+                        {user && user.role === 'admin' && (
+                            <ResponsiveNavLink
+                                href={route('products.create')}
+                                active={route().current('products.create')}
+                            >
+                                Create Product
+                            </ResponsiveNavLink>
+                        )}
                     </div>
 
                     <div className="border-t border-gray-200 pb-1 pt-4">

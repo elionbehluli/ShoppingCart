@@ -16,7 +16,7 @@ class CartController extends Controller
     {
         $user = Auth::user();
         $cart = $user->cart;
-        $products = $cart ? $cart->products : [];
+        $products = $cart ? $cart->products()->with('images')->get() : [];
         $total = $products->sum(function ($product) {
             return $product->price * $product->pivot->quantity;
         });
@@ -25,6 +25,39 @@ class CartController extends Controller
             'products' => $products,
             'total' => $total
         ]);
+    }
+
+    public function update(Request $request, Product $product)
+    {
+        $request->validate([
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        $user = Auth::user();
+        $cart = $user->cart;
+
+        if ($cart && $cart->products()->where('product_id', $product->id)->exists()) {
+            if ($product->stock < $request->quantity) {
+                return back()->withErrors(['quantity' => 'Requested quantity exceeds stock.']);
+            }
+            $cart->products()->updateExistingPivot($product->id, [
+                'quantity' => $request->quantity
+            ]);
+        }
+
+        return back();
+    }
+
+    public function remove(Product $product)
+    {
+        $user = Auth::user();
+        $cart = $user->cart;
+
+        if ($cart) {
+            $cart->products()->detach($product->id);
+        }
+
+        return back()->with('success', 'Product removed from cart!');
     }
 
     public function add(Request $request, Product $product)
