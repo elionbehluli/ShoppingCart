@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Ramsey\Uuid\Uuid;
@@ -15,15 +16,14 @@ class CartController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $cart = $user->cart;
+        $cart = $user->cart()->where('status', Cart::STATUS_CREATED)->first();
         $products = $cart ? $cart->products()->with('images')->get() : [];
-        $total = $products->sum(function ($product) {
-            return $product->price * $product->pivot->quantity;
-        });
+        $total = $cart ? $cart->getTotal() : 0.0;
 
         return Inertia::render('Cart/Index', [
             'products' => $products,
-            'total' => $total
+            'total' => $total,
+            'cart' => $cart
         ]);
     }
 
@@ -67,8 +67,14 @@ class CartController extends Controller
         ]);
 
         $user = Auth::user();
-        $uuid = (string) Uuid::uuid4();
-        $cart = $user->cart ?? Cart::create(['user_id' => $user->id, 'uuid' => $uuid]);
+        $cart = $user->cart()
+            ->where('status', CART::STATUS_CREATED)
+            ->first();
+
+        if (!$cart) {
+            $uuid = (string) Uuid::uuid4();
+            $cart = Cart::create(['user_id' => $user->id, 'uuid' => $uuid]);
+        }
 
         $quantity = $request->input('quantity', 1);
 
@@ -81,5 +87,53 @@ class CartController extends Controller
         }
 
         return back()->with('success', 'Product added to cart!');
+    }
+
+    public function checkout(Request $request)
+    {
+        $request->validate([
+            'cart' => 'required|exists:carts,id'
+        ]);
+
+        $user = Auth::user();
+        /* @var Cart $cart */
+        $cart = Cart::findOrFail($request->cart);
+
+        if ($cart->user_id !== $user->id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        if ($cart->status === Cart::STATUS_USED) {
+            return back()->withErrors(['cart' => 'This cart has already been checked out.']);
+        }
+
+
+        $total = 0;
+        foreach ($cart->products as $product) {
+            $quantityToBuy = min($product->pivot->quantity, $product->stock);
+
+            if ($quantityToBuy > 0) {
+                $total += $quantityToBuy * $product->price;
+                $product->decrement('stock', $quantityToBuy);
+            }
+        }
+
+
+        try {
+            Transaction::create([
+                'tid' => (string) Uuid::uuid4(),
+                'buyer_id' => $user->id,
+                'cart_id' => $cart->id,
+                'price' => $total
+            ]);
+        } catch (\Exception $exception) {
+            return back()->withErrors([$exception->getMessage()]);
+        }
+
+
+        $cart->update(['status' => Cart::STATUS_USED]);
+//        dd($cart);
+
+        return back()->with('success', 'Checkout successful!');
     }
 }

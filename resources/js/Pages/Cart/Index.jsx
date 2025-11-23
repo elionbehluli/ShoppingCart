@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router } from '@inertiajs/react';
 
-export default function Index({ auth, products, total }) {
+export default function Index({ auth, products, total, cart }) {
     const updateQuantity = (product, newQuantity) => {
         if (newQuantity >= 1) {
             router.patch(route('cart.update', product.id), {
@@ -15,6 +15,14 @@ export default function Index({ auth, products, total }) {
     const removeItem = (product) => {
         if (confirm('Are you sure you want to remove this item?')) {
             router.delete(route('cart.remove', product.id));
+        }
+    };
+
+    const handleCheckout = () => {
+        if (confirm('Are you sure you want to checkout?')) {
+            router.post(route('checkout'), {
+                cart: cart.id
+            });
         }
     };
 
@@ -100,11 +108,17 @@ export default function Index({ auth, products, total }) {
                                         </table>
                                     </div>
 
-                                    <div className="mt-8 flex justify-end border-t border-zinc-700 pt-8">
+                                    <div className="mt-8 flex justify-end items-center border-t border-zinc-700 pt-8 gap-6">
                                         <div className="text-right">
                                             <span className="text-zinc-400 font-mono mr-4">Total:</span>
                                             <span className="text-3xl font-bold text-green-400 font-mono">${total.toFixed(2)}</span>
                                         </div>
+                                        <button
+                                            onClick={handleCheckout}
+                                            className="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded shadow-lg shadow-green-900/50 transition-all transform hover:scale-105 font-mono uppercase tracking-wider"
+                                        >
+                                            Checkout
+                                        </button>
                                     </div>
                                 </>
                             ) : (

@@ -40,3 +40,4 @@ Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name
 Route::post('/cart/add/{product}', [App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
 Route::patch('/cart/{product}', [App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
 Route::delete('/cart/{product}', [App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
+Route::post('/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('checkout');
