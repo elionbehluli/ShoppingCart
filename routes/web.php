@@ -32,6 +32,10 @@ use App\Http\Middleware\AdminMiddleware;
 Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
     Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('/admin/products', [ProductController::class, 'adminIndex'])->name('admin.products.index');
+    Route::get('/admin/products/{product}/edit', [ProductController::class, 'adminEdit'])->name('admin.products.edit');
+    Route::put('/admin/products/{product}', [ProductController::class, 'adminUpdate'])->name('admin.products.update');
+    Route::delete('/admin/products/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
 });
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
