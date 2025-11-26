@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendLowStockEmail;
 use App\Models\Cart;
 use App\Models\Product;
 use App\Models\Transaction;
@@ -110,11 +111,12 @@ class CartController extends Controller
 
         $total = 0;
         foreach ($cart->products as $product) {
+            /* @var Product $product */
             $quantityToBuy = min($product->pivot->quantity, $product->stock);
 
             if ($quantityToBuy > 0) {
                 $total += $quantityToBuy * $product->price;
-                $product->decrement('stock', $quantityToBuy);
+                $product->decrementStock($quantityToBuy);
             }
         }
 
@@ -130,9 +132,7 @@ class CartController extends Controller
             return back()->withErrors([$exception->getMessage()]);
         }
 
-
         $cart->update(['status' => Cart::STATUS_USED]);
-//        dd($cart);
 
         return back()->with('success', 'Checkout successful!');
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Product\CreateProductRequest;
+use App\Jobs\SendLowStockEmail;
 use App\Models\Product;
 use Inertia\Inertia;
 use Inertia\Response;
