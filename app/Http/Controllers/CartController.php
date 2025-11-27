@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\SendLowStockEmail;
 use App\Models\Cart;
+use App\Models\CartProduct;
 use App\Models\Product;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -35,7 +36,7 @@ class CartController extends Controller
         ]);
 
         $user = Auth::user();
-        $cart = $user->cart;
+        $cart = $user->cart()->where('status', Cart::STATUS_CREATED)->first();
 
         if ($cart && $cart->products()->where('product_id', $product->id)->exists()) {
             if ($product->stock < $request->quantity) {
@@ -49,14 +50,15 @@ class CartController extends Controller
         return back();
     }
 
-    public function remove(Product $product)
+    public function remove(CartProduct $cartProduct)
     {
         $user = Auth::user();
-        $cart = $user->cart;
 
-        if ($cart) {
-            $cart->products()->detach($product->id);
+        if ($cartProduct->cart->user_id !== $user->id) {
+            abort(403);
         }
+
+        $cartProduct->delete();
 
         return back()->with('success', 'Product removed from cart!');
     }

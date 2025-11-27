@@ -21,7 +21,7 @@ class Cart extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'cart_products')->withPivot('quantity')->withTimestamps();
+        return $this->belongsToMany(Product::class, 'cart_products')->withPivot('id', 'quantity')->withTimestamps();
     }
 
     public function getTotal(): float

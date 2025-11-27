@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Http\Middleware\AdminMiddleware;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -23,11 +24,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add/{product}', [App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
+    Route::patch('/cart/{product}', [App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/{cartProduct}', [App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
+    Route::post('/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('checkout');
 });
 
 require __DIR__.'/auth.php';
-
-use App\Http\Middleware\AdminMiddleware;
 
 Route::middleware(['auth', AdminMiddleware::class])->group(function () {
     Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
@@ -40,8 +45,4 @@ Route::middleware(['auth', AdminMiddleware::class])->group(function () {
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
-Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
-Route::post('/cart/add/{product}', [App\Http\Controllers\CartController::class, 'add'])->name('cart.add');
-Route::patch('/cart/{product}', [App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
-Route::delete('/cart/{product}', [App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
-Route::post('/checkout', [App\Http\Controllers\CartController::class, 'checkout'])->name('checkout');
+

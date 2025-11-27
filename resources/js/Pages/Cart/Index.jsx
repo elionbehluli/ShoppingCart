@@ -14,7 +14,7 @@ export default function Index({ auth, products, total, cart }) {
 
     const removeItem = (product) => {
         if (confirm('Are you sure you want to remove this item?')) {
-            router.delete(route('cart.remove', product.id));
+            router.delete(route('cart.remove', product.pivot.id));
         }
     };
 
