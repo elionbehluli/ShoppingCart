@@ -29,9 +29,14 @@ export default function Navbar() {
                                     Products
                                 </NavLink>
                                 {user.role === 'admin' && (
-                                    <NavLink href={route('products.create')} active={route().current('products.create')}>
-                                        Create Product
-                                    </NavLink>
+                                    <>
+                                        <NavLink href={route('admin.products.index')} active={route().current('admin.products.index')}>
+                                            Admin Products
+                                        </NavLink>
+                                        <NavLink href={route('products.create')} active={route().current('products.create')}>
+                                            Create Product
+                                        </NavLink>
+                                    </>
                                 )}
                             </div>
                         )}

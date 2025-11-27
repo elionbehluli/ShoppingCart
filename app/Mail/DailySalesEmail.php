@@ -66,9 +66,21 @@ class DailySalesEmail extends Mailable
             );
         }
 
+        $zipFileName = 'sales_summary_' . $this->date . '.zip';
+        $csvFileName = 'sales_summary_' . $this->date . '.csv';
+        
+        $zipPath = sys_get_temp_dir() . '/' . uniqid() . '.zip';
+        
+        $zip = new \ZipArchive();
+        if ($zip->open($zipPath, \ZipArchive::CREATE) === TRUE) {
+            $zip->addFromString($csvFileName, $csvData);
+            $zip->close();
+        }
+
         return [
-            Attachment::fromData(fn () => $csvData, 'sales_summary_' . $this->date . '.csv')
-                ->withMime('text/csv'),
+            Attachment::fromPath($zipPath)
+                ->as($zipFileName)
+                ->withMime('application/zip'),
         ];
     }
 }
