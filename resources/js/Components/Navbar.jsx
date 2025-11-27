@@ -139,9 +139,14 @@ export default function Navbar() {
                                 Cart
                             </ResponsiveNavLink>
                             {user.role === 'admin' && (
-                                <ResponsiveNavLink href={route('products.create')} active={route().current('products.create')}>
-                                    Create Product
-                                </ResponsiveNavLink>
+                                <>
+                                    <ResponsiveNavLink href={route('admin.products.index')} active={route().current('admin.products.index')}>
+                                        Admin Products
+                                    </ResponsiveNavLink>
+                                    <ResponsiveNavLink href={route('products.create')} active={route().current('products.create')}>
+                                        Create Product
+                                    </ResponsiveNavLink>
+                                </>
                             )}
                         </div>
 
